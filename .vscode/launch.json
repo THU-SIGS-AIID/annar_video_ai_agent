@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🎬 Run Agent",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/agent.py",
+      "console": "integratedTerminal",
+      "args": ["${input:agentTask}"],
+      "justMyCode": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "agentTask",
+      "type": "promptString",
+      "description": "Task for agent",
+      "default": "List all ideas"
+    }
+  ]
+}

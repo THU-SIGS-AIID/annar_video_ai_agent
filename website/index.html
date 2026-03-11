@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Creator Agent - AI Assistant for Content Creators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #f8fafc;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: #6b7280;
+            font-size: 1.125rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #6b7280;
+        }
+
+        /* Architecture Section */
+        .architecture {
+            padding: 5rem 2rem;
+            background: #f8fafc;
+        }
+
+        .architecture-diagram {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .flow-step h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-step p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #667eea;
+        }
+
+        /* Tools Section */
+        .tools {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tool-card h3 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card p {
+            color: #6b7280;
+            font-size: 0.9375rem;
+        }
+
+        .tool-example {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        /* Comparison Section */
+        .comparison {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .comparison h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .comparison-table {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: #f8fafc;
+            padding: 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .comparison-table td {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            color: #4b5563;
+        }
+
+        .comparison-table .check {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .comparison-table .cross {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        /* Platforms Section */
+        .platforms {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .platform-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .platform-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-card h3 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-card p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .platform-specs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .spec-badge {
+            background: #f3f4f6;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        /* Installation Section */
+        .installation {
+            padding: 5rem 2rem;
+            background: #f8fafc;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        .code-block .comment {
+            color: #6b7280;
+        }
+
+        .code-block .command {
+            color: #10b981;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .flow-diagram {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card,
+        .tool-card,
+        .platform-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">🎬 Video Creator Agent</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#platforms">Platforms</a></li>
+                <li><a href="#install">Install</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Your AI Assistant for<br>Video Content Creation</h1>
+        <p>Save ideas, generate scripts, organize projects - all with AI automation. Support for TikTok, Instagram Reels, Xiaohongshu & YouTube Shorts.</p>
+        <div class="hero-buttons">
+            <a href="#install" class="btn btn-primary">Get Started</a>
+            <a href="https://github.com/yourusername/video-creator-agent" class="btn btn-secondary">View on GitHub</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful Features</h2>
+                <p>Everything you need to streamline your content creation workflow</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Idea Management</h3>
+                    <p>Capture video ideas instantly with smart tags and platform targeting. Never lose a creative idea again.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>AI Script Generation</h3>
+                    <p>Generate platform-specific scripts optimized for each social media platform's unique style and audience.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎬</div>
+                    <h3>Project Organization</h3>
+                    <p>Automatic folder structure for raw footage, edits, and final videos. Stay organized effortlessly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Agent Loop</h3>
+                    <p>Autonomous multi-step reasoning. The agent thinks, acts, and learns until your task is complete.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Activity Tracking</h3>
+                    <p>Complete audit log of all agent actions. Track your productivity and workflow history.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Multi-Platform</h3>
+                    <p>Optimized content for TikTok, Instagram Reels, Xiaohongshu, and YouTube Shorts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture" id="architecture">
+        <div class="container">
+            <div class="section-title">
+                <h2>Agent Architecture</h2>
+                <p>How the AI agent thinks and acts autonomously</p>
+            </div>
+            <div class="architecture-diagram">
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>🎯 User Request</h4>
+                        <p>"Save idea & create script"</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <h4>🧠 LLM Reasoning</h4>
+                        <p>Analyze intent & plan</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <h4>🔧 Tool Execution</h4>
+                        <p>Perform actions</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <h4>✅ Final Answer</h4>
+                        <p>Task complete!</p>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 2rem; color: #6b7280;">
+                    <p><strong>The Loop:</strong> If tools were used, results are fed back to the LLM for further reasoning. This repeats until the task is complete (max 5 iterations).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="tools" id="tools">
+        <div class="container">
+            <div class="section-title">
+                <h2>Available Tools</h2>
+                <p>7 powerful tools that the agent can use autonomously</p>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>save_idea</h3>
+                        <span class="tool-badge">IDEA</span>
+                    </div>
+                    <p>Save video ideas with title, description, tags, and platform.</p>
+                    <div class="tool-example">
+                        save_idea("Morning routine", tags=["productivity"], platform="tiktok")
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>list_ideas</h3>
+                        <span class="tool-badge">IDEA</span>
+                    </div>
+                    <p>Browse and filter saved ideas by platform or tags.</p>
+                    <div class="tool-example">
+                        list_ideas(platform="tiktok", tag="lifestyle")
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>create_script</h3>
+                        <span class="tool-badge">SCRIPT</span>
+                    </div>
+                    <p>Generate AI-powered scripts optimized for specific platforms.</p>
+                    <div class="tool-example">
+                        create_script("Coffee tips", platform="instagram", duration="30s")
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>save_script</h3>
+                        <span class="tool-badge">SCRIPT</span>
+                    </div>
+                    <p>Save generated scripts to drafts or final folders.</p>
+                    <div class="tool-example">
+                        save_script("script.txt", content, is_final=True)
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>create_project</h3>
+                        <span class="tool-badge">PROJECT</span>
+                    </div>
+                    <p>Create organized video project folder structures.</p>
+                    <div class="tool-example">
+                        create_project("Summer Vlog", description="Travel content")
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>organize_video_file</h3>
+                        <span class="tool-badge">FILE</span>
+                    </div>
+                    <p>Move video files to appropriate project folders (raw/edited/final).</p>
+                    <div class="tool-example">
+                        organize_video_file("video.mp4", "Summer Vlog", "raw")
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>list_projects</h3>
+                        <span class="tool-badge">PROJECT</span>
+                    </div>
+                    <p>Display all projects with statistics and status.</p>
+                    <div class="tool-example">
+                        list_projects()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison">
+        <h2>Agent vs Chatbot</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Traditional Chatbot</th>
+                        <th>Video Creator Agent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Actions</strong></td>
+                        <td class="cross">❌ Text only</td>
+                        <td class="check">✅ File operations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Autonomy</strong></td>
+                        <td class="cross">❌ User-dependent</td>
+                        <td class="check">✅ Multi-step tasks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Memory</strong></td>
+                        <td class="cross">❌ Session-only</td>
+                        <td class="check">✅ Persistent storage</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Architecture</strong></td>
+                        <td class="cross">❌ Single-turn</td>
+                        <td class="check">✅ Loop-based</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration</strong></td>
+                        <td class="cross">❌ Isolated</td>
+                        <td class="check">✅ File system</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Platforms Section -->
+    <section class="platforms" id="platforms">
+        <div class="container">
+            <div class="section-title">
+                <h2>Supported Platforms</h2>
+                <p>Optimized content for every major short-form video platform</p>
+            </div>
+            <div class="platforms-grid">
+                <div class="platform-card">
+                    <div class="platform-icon">🎵</div>
+                    <h3>TikTok</h3>
+                    <p>Short, trendy, fast-paced content</p>
+                    <div class="platform-specs">
+                        <span class="spec-badge">15-60s</span>
+                        <span class="spec-badge>Trending</span>
+                        <span class="spec-badge>Hook-focused</span>
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-icon">📸</div>
+                    <h3>Instagram Reels</h3>
+                    <p>Aesthetic, polished visual content</p>
+                    <div class="platform-specs">
+                        <span class="spec-badge">15-90s</span>
+                        <span class="spec-badge>Visual</span>
+                        <span class="spec-badge>Captions</span>
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-icon">📕</div>
+                    <h3>小红书</h3>
+                    <p>Lifestyle, authentic storytelling</p>
+                    <div class="platform-specs">
+                        <span class="spec-badge">30-180s</span>
+                        <span class="spec-badge>Personal</span>
+                        <span class="spec-badge>Story-driven</span>
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-icon">🎬</div>
+                    <h3>YouTube Shorts</h3>
+                    <p>SEO-focused discoverable content</p>
+                    <div class="platform-specs">
+                        <span class="spec-badge">15-60s</span>
+                        <span class="spec-badge>SEO</span>
+                        <span class="spec-badge>Keywords</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section class="installation" id="install">
+        <div class="container">
+            <div class="section-title">
+                <h2>Quick Start</h2>
+                <p>Get up and running in under 5 minutes</p>
+            </div>
+            <div class="code-block">
+                <pre><span class="comment"># 1. Clone the repository</span>
+<span class="command">git clone https://github.com/yourusername/video-creator-agent.git</span>
+<span class="command">cd video-creator-agent</span>
+
+<span class="comment"># 2. Install dependencies</span>
+<span class="command">pip install -r requirements.txt</span>
+
+<span class="comment"># 3. Set your OpenAI API key</span>
+<span class="command">export OPENAI_API_KEY="your-key-here"</span>
+
+<span class="comment"># 4. Run the agent!</span>
+<span class="command">python agent.py "Save idea: morning routine for TikTok"</span></pre>
+            </div>
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="https://github.com/yourusername/video-creator-agent" class="btn btn-primary">View Full Documentation</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/yourusername/video-creator-agent">GitHub</a>
+            <a href="DESIGN_PROPOSAL.md">Design Proposal</a>
+            <a href="README.md">Documentation</a>
+            <a href="web_interface.html">Try Demo</a>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Video Creator Agent. Built with ❤️ for content creators.</p>
+            <p style="margin-top: 0.5rem;">Powered by OpenAI GPT-4o-mini</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .tool-card, .platform-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

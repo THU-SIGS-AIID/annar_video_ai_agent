@@ -1,0 +1,6 @@
+{
+  "agent_name": "Video Creator Agent",
+  "version": "1.0.0",
+  "supported_platforms": ["tiktok", "instagram", "xiaohongshu", "youtube_shorts"],
+  "default_platform": "tiktok"
+}

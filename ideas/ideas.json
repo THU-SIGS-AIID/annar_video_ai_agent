@@ -1,0 +1,61 @@
+[
+  {
+    "id": 1,
+    "title": "Ultimate Morning Routine for Productivity & Success",
+    "description": "Share 5 essential morning habits that transform your day and boost productivity. Cover topics like waking up early, hydration, mindfulness, planning, and healthy breakfast. Perfect for busy professionals and students looking to optimize their mornings.",
+    "tags": [
+      "productivity",
+      "lifestyle"
+    ],
+    "platform": "tiktok",
+    "created_at": "2026-03-05T14:58:56.019172",
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "title": "Park Duck Video Recording",
+    "description": "Let's go to the park and record video with the ducks. This could be a cute, relaxing nature video capturing duck behavior, feeding interactions, or simply scenic park footage with ducks as the main focus.",
+    "tags": [
+      "nature",
+      "ducks",
+      "park",
+      "wildlife",
+      "outdoor",
+      "cute animals"
+    ],
+    "platform": "tiktok",
+    "created_at": "2026-03-05T15:00:31.559473",
+    "status": "active"
+  },
+  {
+    "id": 3,
+    "title": "Canteen Food Run",
+    "description": "A quick vlog-style video showing a trip to the canteen to grab some food. Capture the food options available, the selection process, and the final meal. Perfect for daily life content.",
+    "tags": [
+      "food",
+      "canteen",
+      "vlog",
+      "meal",
+      "dailylife",
+      "quick"
+    ],
+    "platform": "tiktok",
+    "created_at": "2026-03-05T15:32:34.704747",
+    "status": "active"
+  },
+  {
+    "id": 4,
+    "title": "Lantern Festival Celebration Video",
+    "description": "Create a video about the Lantern Festival (元宵节) with content to be released/published until March 6. Perfect for celebrating the traditional Chinese festival with lantern displays, family gatherings, sweet dumplings (tangyuan), and cultural activities.",
+    "tags": [
+      "lantern-festival",
+      "chinese-culture",
+      "traditional-festival",
+      "spring",
+      "celebration"
+    ],
+    "platform": "instagram",
+    "created_at": "2026-03-05T15:37:06.259018",
+    "status": "active"
+  }
+]

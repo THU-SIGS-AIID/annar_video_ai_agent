@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🎬 Run Agent",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "agent.py",
+        "${input:task}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "📋 List Ideas",
+      "type": "shell",
+      "command": "python",
+      "args": ["agent.py", "List all ideas"],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "📁 List Projects",
+      "type": "shell",
+      "command": "python",
+      "args": ["agent.py", "Show all projects"],
+      "presentation": {
+        "reveal": "always"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "task",
+      "description": "Enter agent task",
+      "default": "List all ideas",
+      "type": "promptString"
+    }
+  ]
+}
