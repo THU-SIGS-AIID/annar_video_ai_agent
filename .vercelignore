@@ -1,25 +1,31 @@
-# Ignore Python files for static site deployment
+# Ignore everything except website
+*
+
+# But include website
+!website/
+
+# Ignore Python files
 *.py
 *.pyc
-__pycache__/
+**/__pycache__/
 venv/
 .venv/
-*.env
-.env.*
+requirements.txt
+pyproject.toml
+setup.py
 
-# Ignore data directories
+# Ignore data
 ideas/
 history/
 projects/
 scripts/
 exports/
 
-# Ignore other files
-.git/
-.gitignore
+# Ignore config
+.env
+.env.*
+gitignore
 .DS_Store
-*.log
 
-# Ignore test files
-test_*.py
-*_test.py
+# Keep only website
+website/
