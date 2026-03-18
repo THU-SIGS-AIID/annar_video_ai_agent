@@ -2,6 +2,11 @@
 
 **AI-Powered Assistant for Content Creators** - Supporting TikTok, Instagram Reels, Xiaohongshu, and YouTube Shorts
 
+[![Live Demo](https://img.shields.io/badge/🌐-View_Live_Demo-990C31?style=for-the-badge&logo=vercel&logoColor=white)](https://video-creator-agent.vercel.app)
+[![GitHub](https://img.shields.io/badge/📦-Repository-49020A?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AMatved/annar_video_ai_agent)
+
+> **🚀 Live Demo:** [video-creator-agent.vercel.app](https://video-creator-agent.vercel.app) - Explore the interactive website with MCP integration showcase!
+
 ## 🚀 Features
 
 ### Core Capabilities
