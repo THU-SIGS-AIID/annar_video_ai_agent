@@ -192,6 +192,109 @@
             background: #f8fafc;
         }
 
+        /* MCP Section */
+        .mcp {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .mcp h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .mcp-subtitle {
+            text-align: center;
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mcp-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .mcp-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .mcp-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .mcp-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mcp-card p {
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .mcp-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .mcp-card li {
+            padding: 0.5rem 0;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mcp-card li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .mcp-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .mcp-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: white;
+            text-decoration: none;
+            border-bottom: 2px solid white;
+            padding-bottom: 0.25rem;
+            transition: all 0.3s;
+        }
+
+        .mcp-link:hover {
+            opacity: 0.8;
+            border-bottom-color: transparent;
+        }
+
         .architecture-diagram {
             background: white;
             border-radius: 20px;
@@ -508,6 +611,7 @@
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#mcp">MCP</a></li>
                 <li><a href="#tools">Tools</a></li>
                 <li><a href="#platforms">Platforms</a></li>
                 <li><a href="#install">Install</a></li>
@@ -518,9 +622,10 @@
     <!-- Hero Section -->
     <section class="hero">
         <h1>Your AI Assistant for<br>Video Content Creation</h1>
-        <p>Save ideas, generate scripts, organize projects - all with AI automation. Support for TikTok, Instagram Reels, Xiaohongshu & YouTube Shorts.</p>
+        <p>Save ideas, generate scripts, organize projects - all with AI automation. Now with MCP integration for web search and multi-agent workflows.</p>
         <div class="hero-buttons">
             <a href="#install" class="btn btn-primary">Get Started</a>
+            <a href="#mcp" class="btn btn-secondary">Explore MCP</a>
             <a href="https://github.com/AMatved/annar_video_ai_agent" class="btn btn-secondary">View on GitHub</a>
         </div>
     </section>
@@ -599,6 +704,57 @@
                 <div style="text-align: center; margin-top: 2rem; color: #6b7280;">
                     <p><strong>The Loop:</strong> If tools were used, results are fed back to the LLM for further reasoning. This repeats until the task is complete (max 5 iterations).</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MCP Section -->
+    <section class="mcp" id="mcp">
+        <div class="container">
+            <h2>🔌 Model Context Protocol (MCP)</h2>
+            <p class="mcp-subtitle">Next-generation AI interoperability. Connect with other AI agents, search the web, and build powerful multi-agent workflows.</p>
+
+            <div class="mcp-content">
+                <div class="mcp-card">
+                    <span class="mcp-badge">MCP Client</span>
+                    <h3>🌐 Web Search</h3>
+                    <p>Search the internet in real-time using Tavily MCP integration. Get trending topics, current events, and fresh content ideas.</p>
+                    <ul>
+                        <li>Real-time web search via Tavily</li>
+                        <li>Extract content from webpages</li>
+                        <li>Trending topics discovery</li>
+                        <li>Competitor research</li>
+                    </ul>
+                </div>
+
+                <div class="mcp-card">
+                    <span class="mcp-badge">MCP Server</span>
+                    <h3>🤖 Agent as Service</h3>
+                    <p>Expose your agent tools to other AI applications. Use from Claude Desktop, ChatGPT, or any MCP-compatible client.</p>
+                    <ul>
+                        <li>9 tools via JSON-RPC 2.0</li>
+                        <li>Claude Desktop compatible</li>
+                        <li>Stdio transport</li>
+                        <li>Auto-discovery</li>
+                    </ul>
+                </div>
+
+                <div class="mcp-card">
+                    <span class="mcp-badge">Architecture</span>
+                    <h3>🔗 Composable Workflows</h3>
+                    <p>Combine multiple MCP servers for powerful workflows. Search, analyze, create - all in one seamless pipeline.</p>
+                    <ul>
+                        <li>Chain multiple agents</li>
+                        <li>Shared tool ecosystem</li>
+                        <li>Standard protocol</li>
+                        <li>Future-proof</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <p style="margin-bottom: 1rem; opacity: 0.9;">Ready to explore MCP integration?</p>
+                <a href="MCP_INTEGRATION.md" class="mcp-link">Read MCP Documentation →</a>
             </div>
         </div>
     </section>
@@ -820,13 +976,13 @@
     <footer>
         <div class="footer-links">
             <a href="https://github.com/AMatved/annar_video_ai_agent">GitHub</a>
-            <a href="DESIGN_PROPOSAL.md">Design Proposal</a>
+            <a href="MCP_INTEGRATION.md">MCP Documentation</a>
             <a href="README.md">Documentation</a>
-            <a href="web_interface.html">Try Demo</a>
+            <a href="https://hmodul-video-creator-agent.hf.space" target="_blank">Live Demo</a>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Video Creator Agent. Built with ❤️ for content creators.</p>
-            <p style="margin-top: 0.5rem;">Powered by OpenAI GPT-4o-mini</p>
+            <p>&copy; 2026 Video Creator Agent v3.0. Built with ❤️ for content creators.</p>
+            <p style="margin-top: 0.5rem;">Powered by OpenAI & MCP Protocol</p>
         </div>
     </footer>
 

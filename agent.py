@@ -35,6 +35,14 @@ from dotenv import load_dotenv
 from openai import OpenAI
 load_dotenv()
 
+# ============= MCP INTEGRATION =============
+try:
+    from mcp_tools import TAVILY_TOOLS, web_search, extract_webpage, get_tavily_tools, cleanup_tavily_client
+    MCP_AVAILABLE = True
+except ImportError:
+    MCP_AVAILABLE = False
+    print("⚠️  MCP tools not available. Install mcp package for web search features.")
+
 # ============= CONFIGURATION =============
 BASE_DIR = Path(__file__).parent
 IDEAS_FILE = BASE_DIR / "ideas" / "ideas.json"
@@ -213,6 +221,9 @@ def log_action(action: str, details: dict, success: bool = True):
 
         # Keep only last 1000 entries
         history = history[-1000:]
+
+        # Create directory if not exists
+        HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
 
         with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
             json.dump(history, f, indent=2, ensure_ascii=False)
@@ -608,6 +619,10 @@ tools = [
         }
     }
 ]
+
+# Add MCP tools if available
+if MCP_AVAILABLE:
+    tools.extend(TAVILY_TOOLS)
 
 # ============= ENHANCED TOOL IMPLEMENTATIONS =============
 
@@ -1573,7 +1588,10 @@ available_functions = {
     "create_script_template": create_script_template,
     "search_history": search_history,
     "get_trending_hashtags": get_trending_hashtags,
-    "analyze_best_post_time": analyze_best_post_time
+    "analyze_best_post_time": analyze_best_post_time,
+    # MCP tools (if available)
+    "web_search": web_search if MCP_AVAILABLE else lambda **kwargs: "❌ MCP not available",
+    "extract_webpage": extract_webpage if MCP_AVAILABLE else lambda **kwargs: "❌ MCP not available"
 }
 
 def run_agent(user_message: str, max_iterations: int = 5) -> str:
@@ -1584,49 +1602,53 @@ def run_agent(user_message: str, max_iterations: int = 5) -> str:
 
     try:
         # Enhanced system prompt
+        mcp_features = "\nWEB SEARCH (via MCP):\n🌐 web_search - Search the web for current trends and information\n📄 extract_webpage - Extract content from web pages" if MCP_AVAILABLE else ""
+
         system_prompt = f"""You are a Video Creator Agent v3.0 - an advanced AI assistant for content creators.
 
-{Colors.BOLD}SUPPORTED PLATFORMS:{Colors.END}
+SUPPORTED PLATFORMS:
 🎵 TikTok - Short, trendy, 15-60s
 📸 Instagram Reels - Aesthetic, 15-90s
 📕 小红书 (Xiaohongshu) - Lifestyle, 30-180s
 🎬 YouTube Shorts - SEO-focused, 15-60s
 
-{Colors.BOLD}CORE CAPABILITIES:{Colors.END}
+CORE CAPABILITIES:
 💡 Save and organize video ideas with smart tags
 📝 Generate platform-specific, engaging scripts
 🎬 Create and manage video project structures
 📁 Organize video files (raw → edited → final)
 📊 Track and display usage statistics
 
-{Colors.BOLD}AI GENERATION TOOLS:{Colors.END}
+AI GENERATION TOOLS:
 🎯 generate_titles - Viral, clickbait titles for any topic
 📄 generate_description - Social media descriptions with hashtags
 🎨 generate_thumbnails_ideas - Creative thumbnail concepts
 🔍 optimize_seo - SEO optimization with keywords and tags
 📅 generate_content_plan - Content calendar with daily ideas
 
-{Colors.BOLD}CONTENT MANAGEMENT:{Colors.END}
+CONTENT MANAGEMENT:
 📤 export_ideas - Backup all ideas to JSON
 📥 import_ideas - Import ideas from JSON file
 📋 create_script_template - Save scripts as reusable templates
 🔎 search_history - Search past actions and results
 
-{Colors.BOLD}EXTERNAL DATA:{Colors.END}
+EXTERNAL DATA:
 #️⃣ get_trending_hashtags - Trending hashtags for platform/niche
 ⏰ analyze_best_post_time - Best posting times analysis
+{mcp_features}
 
-{Colors.BOLD}YOUR APPROACH:{Colors.END}
+YOUR APPROACH:
 - Be concise, helpful, and action-oriented
 - Use emojis to make responses engaging
 - Validate inputs before processing
 - Suggest related actions when appropriate
 - Always explain what you're doing and why
 
-{Colors.BOLD}WORKFLOWS TO SUGGEST:{Colors.END}
+WORKFLOWS TO SUGGEST:
 When users ask for content creation, suggest: titles → script → description → hashtags
 When users ask for planning, suggest: content plan → save ideas → create projects
 When users ask for optimization, suggest: SEO → trending hashtags → best post times
+When users ask for current trends: suggest: web_search → generate titles based on trends
 
 Remember: You're not just a chatbot - you're an AGENT that takes action!"""
 

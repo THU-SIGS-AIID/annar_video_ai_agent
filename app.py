@@ -6,6 +6,7 @@ Beautiful Gradio UI for AI-powered content creation
 import gradio as gr
 from agent import run_agent, AgentError
 import os
+import re
 
 # Custom CSS for beautiful design
 custom_css = """
@@ -125,11 +126,15 @@ QUICK_COMMANDS = [
 def process_command(message, history):
     """Process user command and return response"""
     try:
-        # Run agent
-        result = run_agent(message)
+        # Run agent with optimized settings for web interface
+        # Reduce iterations for faster responses
+        result = run_agent(message, max_iterations=2)
 
-        # Format response
-        return result
+        # Remove ANSI color codes for Gradio compatibility
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        clean_result = ansi_escape.sub('', result)
+
+        return clean_result
 
     except AgentError as e:
         return f"❌ Error: {str(e)}"
@@ -282,14 +287,15 @@ with gr.Blocks() as demo:
     # Event handlers
     def user_message(user_message, history):
         """Add user message to history"""
-        return "", history + [[user_message, None]]
+        # Gradio 6.0+ format: list of dicts with 'role' and 'content'
+        return "", history + [{"role": "user", "content": user_message}]
 
     def bot_response(history):
         """Generate bot response"""
-        user_message = history[-1][0]
+        user_message = history[-1]["content"] if history else ""
         bot_message = process_command(user_message, history)
-        history[-1][1] = bot_message
-        return history
+        # Append bot response to history
+        return history + [{"role": "assistant", "content": bot_message}]
 
     # Chat interactions
     submit.click(
@@ -318,7 +324,7 @@ with gr.Blocks() as demo:
 
     for btn, cmd in zip(quick_cmd_btns, QUICK_COMMANDS):
         btn.click(
-            lambda c=cmd: (c, [[c, None]]),
+            lambda c=cmd: (c, [{"role": "user", "content": c}]),
             outputs=[msg, chatbot]
         ).then(
             bot_response,
