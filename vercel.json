@@ -1,8 +1,9 @@
 {
   "version": 2,
+  "name": "video-creator-agent",
   "builds": [
     {
-      "src": "website/**",
+      "src": "website/index.html",
       "use": "@vercel/static"
     }
   ],
@@ -14,6 +15,12 @@
     {
       "src": "/(.*)",
       "dest": "/website/$1"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/website/index.html"
     }
   ]
 }
