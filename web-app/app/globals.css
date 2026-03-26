@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --anime-orange: #F6A560;
+  --anime-dark: #0F1112;
+  --anime-dark-secondary: #0F2124;
+  --anime-light: #F5F5F5;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0F1112 0%, #0F2124 100%);
+  color: var(--anime-light);
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 33, 36, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(246, 165, 96, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(246, 165, 96, 0.5);
+}
+
+/* Glowing effects */
+.glow-border {
+  border: 1px solid rgba(246, 165, 96, 0.2);
+  box-shadow: 0 0 20px rgba(246, 165, 96, 0.1);
+}
+
+.glow-border:hover {
+  border-color: rgba(246, 165, 96, 0.4);
+  box-shadow: 0 0 30px rgba(246, 165, 96, 0.3);
+}
+
+/* Animated background gradient */
+.animated-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(246, 165, 96, 0.05) 0%,
+    rgba(15, 33, 36, 0.1) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Sparkle particles */
+.sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--anime-orange);
+  border-radius: 50%;
+  animation: sparkle 2s ease-in-out infinite;
+  opacity: 0;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* Typing indicator */
+.typing-indicator span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--anime-orange);
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: typing 1.4s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-10px); opacity: 1; }
+}
+
+/* Message animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-animate {
+  animation: slideIn 0.3s ease-out;
+}

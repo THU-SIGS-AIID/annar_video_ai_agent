@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api-url"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_APP_URL": "@app-url"
+    }
+  }
+}
