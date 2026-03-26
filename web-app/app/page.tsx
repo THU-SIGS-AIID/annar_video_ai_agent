@@ -16,6 +16,9 @@ import {
   CheckCircle2,
   Circle,
   Loader2,
+  Edit2,
+  Trash2,
+  X,
 } from 'lucide-react';
 
 interface Message {
@@ -30,6 +33,7 @@ interface Task {
   title: string;
   status: 'pending' | 'in_progress' | 'completed';
   createdAt: Date;
+  editing?: boolean;
 }
 
 const skills = [
@@ -39,9 +43,9 @@ const skills = [
   { name: 'Coding Assistance', icon: Code, color: 'text-green-400' },
 ] as const;
 
-// Move sparkles outside component to avoid re-creation
+// Move sparkles outside component
 const createSparkles = () =>
-  Array.from({ length: 15 }, (_, i) => ({
+  Array.from({ length: 12 }, (_, i) => ({
     id: `sparkle-${i}`,
     style: {
       left: `${Math.random() * 100}%`,
@@ -57,7 +61,8 @@ export default function Home() {
     {
       id: '1',
       role: 'assistant',
-      content: "Hi! 👋 I'm your AI assistant. I can help you with content creation, research, automation, and much more. What would you like to work on today?",
+      content:
+        "Hi! 👋 I'm your AI assistant. I can help you with:\n\n• Content creation (scripts, titles, descriptions)\n• Social media automation\n• Research & trend analysis\n• Task management\n\nTry saying: 'Create 5 viral TikTok titles' or 'Add task: Plan my content'",
       timestamp: new Date(),
     },
   ]);
@@ -65,9 +70,10 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const [activeTab, setActiveTab] = useState<'chat' | 'tasks'>('chat');
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editedTaskTitle, setEditedTaskTitle] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Memoize sparkles to prevent re-creation
   const sparkles = useMemo(() => initialSparkles, []);
 
   const scrollToBottom = useCallback(() => {
@@ -82,21 +88,50 @@ export default function Home() {
     if (!input.trim()) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `msg-${Date.now()}`,
       role: 'user',
       content: input,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsTyping(true);
+
+    // Check for task creation commands
+    if (currentInput.toLowerCase().includes('add task') || currentInput.toLowerCase().includes('create task')) {
+      const taskTitle = currentInput
+        .replace(/add task:?\s*/i, '')
+        .replace(/create task:?\s*/i, '')
+        .trim();
+
+      const newTask: Task = {
+        id: `task-${Date.now()}`,
+        title: taskTitle || 'New Task',
+        status: 'pending',
+        createdAt: new Date(),
+      };
+
+      setTasks((prev) => [...prev, newTask]);
+
+      const taskMessage: Message = {
+        id: `msg-${Date.now() + 1}`,
+        role: 'assistant',
+        content: `✅ Task created: "${newTask.title}"\n\nSwitch to the Tasks tab to manage it.`,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, taskMessage]);
+      setIsTyping(false);
+      return;
+    }
 
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: currentInput }),
       });
 
       if (!response.ok) throw new Error('Failed to get response');
@@ -104,7 +139,7 @@ export default function Home() {
       const data = await response.json();
 
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `msg-${Date.now() + 1}`,
         role: 'assistant',
         content: data.message || 'I processed your request!',
         timestamp: new Date(),
@@ -112,26 +147,121 @@ export default function Home() {
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
+      // Mock response for demo
+      const mockResponse = generateMockResponse(currentInput);
+      const assistantMessage: Message = {
+        id: `msg-${Date.now() + 1}`,
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: mockResponse,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
     } finally {
       setIsTyping(false);
     }
   }, [input]);
 
+  const generateMockResponse = (userMessage: string): string => {
+    const lower = userMessage.toLowerCase();
+
+    if (lower.includes('script') || lower.includes('скрипт')) {
+      return `📝 **Script Generation**
+
+Here's a sample script for your video:
+
+**Hook:** (0-3 seconds)
+"Wait, you won't believe this hack!"
+
+**Main Content:** (3-15 seconds)
+Explain your topic with passion and energy. Use quick cuts and text overlays.
+
+**CTA:** (15-18 seconds)
+"Follow for more! Link in bio!"
+
+Want me to customize this for a specific topic?`;
+    }
+
+    if (lower.includes('title') || lower.includes('заголовок')) {
+      return `🎯 **Viral Title Ideas:**
+
+1. "This One Trick Changed Everything..."
+2. "Nobody Talks About This..."
+3. "I Tried ____ For 30 Days..."
+4. "The Secret To ____ That Nobody Knows"
+5. "Why You're Failing At ____ (And How To Fix It)"
+
+Which platform are you creating content for?`;
+    }
+
+    if (lower.includes('idea') || lower.includes('идея')) {
+      return `💡 **Content Ideas:**
+
+1. **Tutorial**: Show your expertise
+2. **Behind the scenes**: Personal connection
+3. **Trend response**: Join the conversation
+4. **Storytime**: Engaging narrative
+5. **Challenge**: Interactive content
+
+What niche interests you?`;
+    }
+
+    return `I understand you're asking about: "${userMessage}"
+
+Currently, I'm in demo mode. To enable full AI agent features:
+
+1. **Deploy the Python backend** (see DEPLOYMENT.md)
+2. **Set BACKEND_URL environment variable** in Vercel
+3. **Redeploy** the web app
+
+For now, I can help you create and manage tasks. Try:
+- "Add task: Create content calendar"
+- "Create task: Research trending topics"`;
+  };
+
   const handleCreateTask = useCallback(() => {
     const newTask: Task = {
-      id: Date.now().toString(),
+      id: `task-${Date.now()}`,
       title: 'New Task',
       status: 'pending',
       createdAt: new Date(),
     };
     setTasks((prev) => [...prev, newTask]);
+  }, []);
+
+  const handleEditTask = useCallback((taskId: string, newTitle: string) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, title: newTitle, editing: false } : task
+      )
+    );
+    setEditingTaskId(null);
+    setEditedTaskTitle('');
+  }, []);
+
+  const handleStartEdit = useCallback((taskId: string, currentTitle: string) => {
+    setEditingTaskId(taskId);
+    setEditedTaskTitle(currentTitle);
+  }, []);
+
+  const handleCancelEdit = useCallback(() => {
+    setEditingTaskId(null);
+    setEditedTaskTitle('');
+  }, []);
+
+  const handleDeleteTask = useCallback((taskId: string) => {
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
+  }, []);
+
+  const handleToggleTaskStatus = useCallback((taskId: string) => {
+    setTasks((prev) =>
+      prev.map((task) => {
+        if (task.id === taskId) {
+          const statusFlow = { pending: 'in_progress' as const, in_progress: 'completed' as const, completed: 'pending' as const };
+          return { ...task, status: statusFlow[task.status] };
+        }
+        return task;
+      })
+    );
   }, []);
 
   const getStatusIcon = useCallback((status: Task['status']) => {
@@ -147,25 +277,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-anime-dark text-anime-light flex flex-col relative overflow-hidden">
-      {/* Animated background */}
       <div className="absolute inset-0 animated-bg opacity-50" />
 
-      {/* Sparkle particles */}
       {sparkles.map((sparkle) => (
-        <div
-          key={sparkle.id}
-          className="sparkle"
-          style={sparkle.style}
-        />
+        <div key={sparkle.id} className="sparkle" style={sparkle.style} />
       ))}
 
-      {/* Header */}
       <header className="relative z-10 flex justify-between items-center p-4 border-b border-gray-800/50 backdrop-blur-sm bg-anime-dark/50">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-3"
-        >
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
           <div className="relative">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-anime-orange to-yellow-500 flex items-center justify-center shadow-glow">
               <Bot className="w-6 h-6 text-anime-dark" />
@@ -192,8 +311,7 @@ export default function Home() {
                 if (item === 'Chat') setActiveTab('chat');
               }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                (item === 'Tasks' && activeTab === 'tasks') ||
-                (item === 'Chat' && activeTab === 'chat')
+                (item === 'Tasks' && activeTab === 'tasks') || (item === 'Chat' && activeTab === 'chat')
                   ? 'bg-anime-orange text-anime-dark shadow-glow'
                   : 'bg-anime-dark-secondary hover:bg-anime-orange/20 hover:shadow-glow-soft'
               }`}
@@ -204,9 +322,7 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* Main Content */}
       <div className="relative z-10 flex flex-1">
-        {/* Left Panel - Agent Info */}
         <motion.aside
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -257,7 +373,6 @@ export default function Home() {
           </div>
         </motion.aside>
 
-        {/* Right Panel - Main Content */}
         <main className="flex-1 flex flex-col backdrop-blur-sm">
           <AnimatePresence mode="wait">
             {activeTab === 'chat' ? (
@@ -268,7 +383,6 @@ export default function Home() {
                 exit={{ opacity: 0, y: -20 }}
                 className="flex-1 flex flex-col"
               >
-                {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
                   {messages.map((message) => (
                     <motion.div
@@ -293,11 +407,7 @@ export default function Home() {
                   ))}
 
                   {isTyping && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-start"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
                       <div className="bg-gradient-to-br from-anime-orange/20 to-yellow-500/20 border border-anime-orange/30 rounded-2xl px-5 py-3">
                         <div className="typing-indicator flex gap-1">
                           <span />
@@ -311,7 +421,6 @@ export default function Home() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Chat Input */}
                 <div className="p-4 border-t border-gray-800/50 backdrop-blur-sm bg-anime-dark/30">
                   <div className="flex gap-3 items-center">
                     <div className="flex-1 relative">
@@ -319,8 +428,8 @@ export default function Home() {
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                        placeholder="Ask me anything or give me a task..."
+                        onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                        placeholder="Ask me anything or give me a task... (Shift+Enter for new line)"
                         className="w-full px-5 py-3 pr-12 rounded-full bg-anime-dark-secondary border border-gray-700/50 focus:border-anime-orange/50 focus:outline-none focus:shadow-glow-soft transition-all duration-300 text-sm"
                       />
                       <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-anime-orange/20 transition-colors">
@@ -337,6 +446,9 @@ export default function Home() {
                       Send
                     </motion.button>
                   </div>
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    Try: &quot;Create 5 viral titles&quot; or &quot;Add task: Plan content calendar&quot;
+                  </p>
                 </div>
               </motion.div>
             ) : (
@@ -365,6 +477,9 @@ export default function Home() {
                     <div className="text-center py-12">
                       <Circle className="w-16 h-16 text-gray-700 mx-auto mb-4" />
                       <p className="text-gray-400">No tasks yet. Create one to get started!</p>
+                      <p className="text-gray-500 text-sm mt-2">
+                        You can also create tasks from chat: &quot;Add task: Your task name&quot;
+                      </p>
                     </div>
                   ) : (
                     tasks.map((task) => (
@@ -372,31 +487,82 @@ export default function Home() {
                         key={task.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-4 rounded-xl bg-anime-dark-secondary/50 glow-border transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+                        className="p-4 rounded-xl bg-anime-dark-secondary/50 glow-border transition-all duration-300 hover:scale-[1.02]"
                       >
-                        <div className="flex items-center justify-between">
+                        {editingTaskId === task.id ? (
                           <div className="flex items-center gap-3">
-                            {getStatusIcon(task.status)}
-                            <div>
-                              <h3 className="font-semibold">{task.title}</h3>
-                              <p className="text-xs text-gray-400 flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {task.createdAt.toLocaleString()}
-                              </p>
+                            <input
+                              type="text"
+                              value={editedTaskTitle}
+                              onChange={(e) => setEditedTaskTitle(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleEditTask(task.id, editedTaskTitle)}
+                              className="flex-1 px-3 py-2 rounded-lg bg-anime-dark border border-gray-700 focus:border-anime-orange/50 focus:outline-none text-sm"
+                              autoFocus
+                            />
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleEditTask(task.id, editedTaskTitle)}
+                              className="p-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={handleCancelEdit}
+                              className="p-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </motion.button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <div
+                              className="flex items-center gap-3 flex-1 cursor-pointer"
+                              onClick={() => handleToggleTaskStatus(task.id)}
+                            >
+                              {getStatusIcon(task.status)}
+                              <div>
+                                <h3 className="font-semibold">{task.title}</h3>
+                                <p className="text-xs text-gray-400 flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {task.createdAt.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 ${
+                                  task.status === 'completed'
+                                    ? 'bg-green-400/20 text-green-400'
+                                    : task.status === 'in_progress'
+                                    ? 'bg-yellow-400/20 text-yellow-400'
+                                    : 'bg-gray-400/20 text-gray-400'
+                                }`}
+                                onClick={() => handleToggleTaskStatus(task.id)}
+                              >
+                                {task.status.replace('_', ' ')}
+                              </span>
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => handleStartEdit(task.id, task.title)}
+                                className="p-2 rounded-lg hover:bg-anime-orange/20 transition-colors"
+                              >
+                                <Edit2 className="w-4 h-4 text-gray-400" />
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => handleDeleteTask(task.id)}
+                                className="p-2 rounded-lg hover:bg-red-500/20 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4 text-gray-400" />
+                              </motion.button>
                             </div>
                           </div>
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              task.status === 'completed'
-                                ? 'bg-green-400/20 text-green-400'
-                                : task.status === 'in_progress'
-                                ? 'bg-yellow-400/20 text-yellow-400'
-                                : 'bg-gray-400/20 text-gray-400'
-                            }`}
-                          >
-                            {task.status.replace('_', ' ')}
-                          </span>
-                        </div>
+                        )}
                       </motion.div>
                     ))
                   )}
