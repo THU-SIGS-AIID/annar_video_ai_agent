@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bot,
-  MessageSquare,
-  Settings,
   Sparkles,
   Zap,
   Brain,
@@ -39,23 +37,27 @@ const skills = [
   { name: 'Research & Analysis', icon: Brain, color: 'text-purple-400' },
   { name: 'Content Creation', icon: FileText, color: 'text-blue-400' },
   { name: 'Coding Assistance', icon: Code, color: 'text-green-400' },
-];
+] as const;
 
-const sparkles = Array.from({ length: 20 }, (_, i) => ({
-  id: i,
-  style: {
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 100}%`,
-    animationDelay: `${Math.random() * 3}s`,
-  },
-}));
+// Move sparkles outside component to avoid re-creation
+const createSparkles = () =>
+  Array.from({ length: 15 }, (_, i) => ({
+    id: `sparkle-${i}`,
+    style: {
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 3}s`,
+    },
+  }));
+
+const initialSparkles = createSparkles();
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: 'Hi! 👋 I\'m your AI assistant. I can help you with content creation, research, automation, and much more. What would you like to work on today?',
+      content: "Hi! 👋 I'm your AI assistant. I can help you with content creation, research, automation, and much more. What would you like to work on today?",
       timestamp: new Date(),
     },
   ]);
@@ -65,15 +67,18 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
+  // Memoize sparkles to prevent re-creation
+  const sparkles = useMemo(() => initialSparkles, []);
+
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!input.trim()) return;
 
     const userMessage: Message = {
@@ -117,9 +122,9 @@ export default function Home() {
     } finally {
       setIsTyping(false);
     }
-  };
+  }, [input]);
 
-  const handleCreateTask = () => {
+  const handleCreateTask = useCallback(() => {
     const newTask: Task = {
       id: Date.now().toString(),
       title: 'New Task',
@@ -127,9 +132,9 @@ export default function Home() {
       createdAt: new Date(),
     };
     setTasks((prev) => [...prev, newTask]);
-  };
+  }, []);
 
-  const getStatusIcon = (status: Task['status']) => {
+  const getStatusIcon = useCallback((status: Task['status']) => {
     switch (status) {
       case 'completed':
         return <CheckCircle2 className="w-5 h-5 text-green-400" />;
@@ -138,7 +143,7 @@ export default function Home() {
       default:
         return <Circle className="w-5 h-5 text-gray-400" />;
     }
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-anime-dark text-anime-light flex flex-col relative overflow-hidden">
@@ -182,9 +187,13 @@ export default function Home() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              onClick={() => item === 'Tasks' ? setActiveTab('tasks') : item === 'Chat' ? setActiveTab('chat') : null}
+              onClick={() => {
+                if (item === 'Tasks') setActiveTab('tasks');
+                if (item === 'Chat') setActiveTab('chat');
+              }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                (item === 'Tasks' && activeTab === 'tasks') || (item === 'Chat' && activeTab === 'chat')
+                (item === 'Tasks' && activeTab === 'tasks') ||
+                (item === 'Chat' && activeTab === 'chat')
                   ? 'bg-anime-orange text-anime-dark shadow-glow'
                   : 'bg-anime-dark-secondary hover:bg-anime-orange/20 hover:shadow-glow-soft'
               }`}
@@ -201,7 +210,7 @@ export default function Home() {
         <motion.aside
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="w-80 p-6 border-r border-gray-800/50 backdrop-blur-sm bg-anime-dark/30 flex flex-col"
+          className="w-80 p-6 border-r border-gray-800/50 backdrop-blur-sm bg-anime-dark/30 flex flex-col hidden md:flex"
         >
           <div className="flex flex-col items-center text-center mb-6">
             <motion.div
@@ -243,7 +252,7 @@ export default function Home() {
 
           <div className="mt-auto p-4 rounded-xl bg-gradient-to-br from-anime-orange/10 to-yellow-500/10 border border-anime-orange/20">
             <p className="text-xs text-gray-300 leading-relaxed">
-              I help you create content, automate tasks, conduct research, and assist with coding. Let's create something amazing together! ✨
+              I help you create content, automate tasks, conduct research, and assist with coding. Let&apos;s create something amazing together! ✨
             </p>
           </div>
         </motion.aside>
@@ -376,11 +385,15 @@ export default function Home() {
                               </p>
                             </div>
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            task.status === 'completed' ? 'bg-green-400/20 text-green-400' :
-                            task.status === 'in_progress' ? 'bg-yellow-400/20 text-yellow-400' :
-                            'bg-gray-400/20 text-gray-400'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              task.status === 'completed'
+                                ? 'bg-green-400/20 text-green-400'
+                                : task.status === 'in_progress'
+                                ? 'bg-yellow-400/20 text-yellow-400'
+                                : 'bg-gray-400/20 text-gray-400'
+                            }`}
+                          >
                             {task.status.replace('_', ' ')}
                           </span>
                         </div>

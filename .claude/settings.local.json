@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd.exe /c \"\\\\\"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\Scripts\\\\tvly.exe\\\\\" --version\")",
+      "Bash(cmd.exe /c \"\\\\\"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\Scripts\\\\tvly.exe\\\\\" search \\\\\"recommended sushi restaurants\\\\\" --max-results 5 --json 2>&1\")",
+      "Bash(cd /c/Users/User/video_creator_agent && python agent.py \"搜索推荐的寿司餐厅\")",
+      "Bash(python agent.py \"Search for AI digital human educational video trends China 2024 2025 virtual teacher short video\" 2>&1)",
+      "WebSearch"
+    ]
+  }
+}

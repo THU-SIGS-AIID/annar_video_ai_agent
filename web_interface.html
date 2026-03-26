@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Creator Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .response {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .response.show {
+            display: block;
+        }
+
+        .response h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .response pre {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .examples {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .examples h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .examples ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .examples li {
+            padding: 8px 12px;
+            background: white;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .examples li:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Video Creator Agent</h1>
+        <p class="subtitle">AI Assistant for Content Creators</p>
+
+        <div class="input-group">
+            <label for="task">What would you like to do?</label>
+            <textarea id="task" placeholder="Enter your task here...
+
+Examples:
+• Save idea: morning routine for TikTok
+• Create a script about productivity tips
+• List all my ideas
+• Create project called 'Summer Vlog'"></textarea>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="runAgent()">🚀 Run Agent</button>
+            <button class="btn-secondary" onclick="clearResponse()">🗑️ Clear</button>
+            <button class="btn-secondary" onclick="quickCommand('List all ideas')">📋 Ideas</button>
+            <button class="btn-secondary" onclick="quickCommand('Show all projects')">📁 Projects</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Agent is working...</p>
+        </div>
+
+        <div class="response" id="response">
+            <h3>🤖 Agent Response:</h3>
+            <pre id="responseContent"></pre>
+        </div>
+
+        <div class="examples">
+            <h4>💡 Quick Examples (click to use):</h4>
+            <ul>
+                <li onclick="quickCommand('Save idea: morning routine for TikTok with tags productivity and lifestyle')">
+                    💾 Save idea: morning routine for TikTok
+                </li>
+                <li onclick="quickCommand('Create 30s script about productivity tips')">
+                    📝 Create 30s script about productivity tips
+                </li>
+                <li onclick="quickCommand('Create project called My First Video')">
+                    📁 Create project called 'My First Video'
+                </li>
+                <li onclick="quickCommand('List all ideas')">
+                    📋 List all my ideas
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function quickCommand(command) {
+            document.getElementById('task').value = command;
+        }
+
+        function clearResponse() {
+            document.getElementById('response').classList.remove('show');
+            document.getElementById('task').value = '';
+        }
+
+        async function runAgent() {
+            const task = document.getElementById('task').value.trim();
+            if (!task) {
+                alert('Please enter a task!');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const response = document.getElementById('response');
+            const responseContent = document.getElementById('responseContent');
+
+            loading.classList.add('show');
+            response.classList.remove('show');
+
+            try {
+                const result = await window.electron.runAgent(task);
+                responseContent.textContent = result;
+                response.classList.add('show');
+            } catch (error) {
+                responseContent.textContent = 'Error: ' + error.message +
+                    '\n\nNote: This interface requires a backend server. ' +
+                    'Use the terminal instead:\n\n' +
+                    'python agent.py "' + task + '"';
+                response.classList.add('show');
+            }
+
+            loading.classList.remove('show');
+        }
+
+        // Enter key to run
+        document.getElementById('task').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                runAgent();
+            }
+        });
+    </script>
+</body>
+</html>

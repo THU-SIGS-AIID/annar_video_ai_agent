@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""
+Russian Food Finder - Shenzhen 🇷🇺
+Find Russian restaurants, bakeries, and groceries in Shenzhen, China
+"""
+
+import argparse
+import subprocess
+import json
+import sys
+
+def search_tvly(query, max_results=10):
+    """Search using Tavily CLI"""
+    cmd = [
+        "tvly", "search",
+        query,
+        "--max-results", str(max_results),
+        "--json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, shell=True)
+        if result.returncode == 0:
+            return json.loads(result.stdout)
+        return None
+    except Exception as e:
+        print(f"⚠️  Search error: {e}")
+        return None
+
+def cmd_find(args):
+    """Find Russian food places"""
+    if args.type == "restaurants":
+        queries = [
+            "俄罗斯餐厅 深圳 评价 推荐",
+            "Russian restaurant Shenzhen Shekou Nanshan",
+            "俄式料理 深圳 罗湖 福田"
+        ]
+    elif args.type == "grocery":
+        queries = [
+            "俄罗斯超市 深圳 进口食品",
+            "Russian grocery store Shenzhen",
+            "东欧食品店 深圳"
+        ]
+    elif args.type == "bakery":
+        queries = [
+            "俄罗斯面包房 深圳",
+            "Russian bakery Shenzhen",
+            "俄式烘焙 深圳"
+        ]
+    else:
+        queries = [f"俄罗斯餐厅 {args.type} 深圳" if args.type else "俄罗斯餐厅 深圳"]
+
+    print(f"🔍 Searching for {args.type or 'Russian restaurants'} in Shenzhen...\n")
+
+    for query in queries:
+        print(f"📍 Query: {query}")
+        results = search_tvly(query, max_results=5)
+        if results:
+            for result in results.get("results", []):
+                title = result.get("title", "N/A")
+                url = result.get("url", "")
+                content = result.get("content", "")[:150]
+                print(f"\n  🏠 {title}")
+                if url:
+                    print(f"  🔗 {url}")
+                if content:
+                    print(f"  📝 {content}...")
+        print()
+
+def cmd_search(args):
+    """Custom search"""
+    query = f"{args.query} 深圳 Shenzhen"
+    print(f"🔍 Searching: {query}\n")
+    results = search_tvly(query, max_results=args.max)
+    if results:
+        for result in results.get("results", []):
+            print(f"\n🏠 {result.get('title', 'N/A')}")
+            print(f"🔗 {result.get('url', '')}")
+            print(f"📝 {result.get('content', '')[:200]}...")
+
+def cmd_recommend(args):
+    """Get top recommendations"""
+    print("🇷🇺 Top Russian Food Recommendations in Shenzhen\n")
+    print("=" * 50)
+
+    queries = [
+        "best Russian restaurant Shenzhen review rating",
+        "俄式餐厅 深圳 推荐 高分",
+        "Shekou Russian food expat recommendation"
+    ]
+
+    for query in queries:
+        print(f"\n🔍 {query}")
+        results = search_tvly(query, max_results=3)
+        if results:
+            for r in results.get("results", []):
+                print(f"\n  ⭐ {r.get('title', 'N/A')}")
+                print(f"  📍 {r.get('url', '')}")
+
+def main():
+    parser = argparse.ArgumentParser(description="Find Russian food in Shenzhen")
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
+
+    # Find command
+    find_parser = subparsers.add_parser("find", help="Find Russian food places")
+    find_parser.add_argument("type", nargs="?", default="restaurants",
+                            choices=["restaurants", "grocery", "bakery"],
+                            help="Type of place to find")
+    find_parser.set_defaults(func=cmd_find)
+
+    # Search command
+    search_parser = subparsers.add_parser("search", help="Custom search")
+    search_parser.add_argument("query", help="Search query")
+    search_parser.add_argument("--max", type=int, default=10, help="Max results")
+    search_parser.set_defaults(func=cmd_search)
+
+    # Recommend command
+    rec_parser = subparsers.add_parser("recommend", help="Get recommendations")
+    rec_parser.set_defaults(func=cmd_recommend)
+
+    args = parser.parse_args()
+
+    if args.command:
+        args.func(args)
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()
