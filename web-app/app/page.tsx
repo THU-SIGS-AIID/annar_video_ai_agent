@@ -166,9 +166,11 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  const currentChat = getCurrentChat();
+
   useEffect(() => {
     scrollToBottom();
-  }, [getCurrentChat()?.messages, scrollToBottom]);
+  }, [currentChat?.messages.length, scrollToBottom]);
 
   const handleCreateNewChat = useCallback(() => {
     const newChat: Chat = {
