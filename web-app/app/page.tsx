@@ -171,7 +171,7 @@ export default function Home() {
     if (chat?.messages) {
       scrollToBottom();
     }
-  }, [getCurrentChat().messages.length, scrollToBottom]);
+  }, [currentChatId, chats, scrollToBottom]);
 
   const handleCreateNewChat = useCallback(() => {
     const newChat: Chat = {
